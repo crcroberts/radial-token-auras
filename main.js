@@ -124,20 +124,36 @@ Token.prototype.drawAuras = function () {
 	const auras = Auras.getAllAuras(this).filter(a => a.distance);
 
 	if (auras.length) {
-		const [cx, cy] = [this.w / 2, this.h / 2];
+		const gfx = this.auras.addChild(new PIXI.Graphics());
 		const dim = canvas.dimensions;
 		const unit = dim.size / dim.distance;
-		const gfx = this.auras.addChild(new PIXI.Graphics());
+		const [cx, cy] = [this.w / 2, this.h / 2];
+
+		let {width, height} = this.data;
+		width *= dim.distance;
+		height *= dim.distance;
 
 		auras.forEach(aura => {
+			let w, h;
+
+			if (aura.square) {
+				[w, h] = [aura.distance * 2 + width, aura.distance * 2 + height];
+			} else {
+				[w, h] = [
+					aura.distance + width - dim.distance,
+					aura.distance + height - dim.distance
+				];
+			}
+
+			w *= unit;
+			h *= unit;
 			gfx.beginFill(colorStringToHex(aura.colour), aura.opacity);
 
 			if (aura.square) {
-				const side = aura.distance * unit;
-				const [x, y] = [cx - side / 2, cy - side / 2];
-				gfx.drawRect(x, y, side, side);
+				const [x, y] = [cx - w / 2, cy - h / 2];
+				gfx.drawRect(x, y, w, h);
 			} else {
-				gfx.drawCircle(cx, cy, aura.distance * unit)
+				gfx.drawEllipse(cx, cy, w, h);
 			}
 
 			gfx.endFill();
