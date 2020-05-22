@@ -125,13 +125,11 @@ Token.prototype.drawAuras = function () {
 
 	if (auras.length) {
 		const gfx = this.auras.addChild(new PIXI.Graphics());
+		const squareGrid = canvas.scene.data.gridType === 1;
 		const dim = canvas.dimensions;
 		const unit = dim.size / dim.distance;
 		const [cx, cy] = [this.w / 2, this.h / 2];
-
-		let {width, height} = this.data;
-		width *= dim.distance;
-		height *= dim.distance;
+		const {width, height} = this.data;
 
 		auras.forEach(aura => {
 			let w, h;
@@ -139,10 +137,15 @@ Token.prototype.drawAuras = function () {
 			if (aura.square) {
 				[w, h] = [aura.distance * 2 + width, aura.distance * 2 + height];
 			} else {
-				[w, h] = [
-					aura.distance + width - dim.distance,
-					aura.distance + height - dim.distance
-				];
+				[w, h] = [aura.distance, aura.distance];
+
+				if (squareGrid) {
+					w += width * dim.distance / 2;
+					h += height * dim.distance / 2;
+				} else {
+					w += (width - 1) * dim.distance / 2;
+					h += (height - 1) * dim.distance / 2;
+				}
 			}
 
 			w *= unit;
