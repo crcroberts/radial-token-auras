@@ -97,7 +97,7 @@ const Auras = {
 		`));
 
 		imageTab.find('.auras input[type="color"][data-edit]')
-			.change(config._onColorPickerChange.bind(config));
+			.change(config._onChangeInput.bind(config));
 	},
 
 	uuid: function () {
@@ -106,8 +106,10 @@ const Auras = {
 				(c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16));
 	}
 };
-
-Hooks.on('renderTokenConfig', Auras.onConfigRender);
+Hooks.on('ready', () => {
+	const tokenConfigHook = `renderTokenConfig${game.system.id === 'pf1' ? 'PF' : ''}`;
+	Hooks.on(tokenConfigHook, Auras.onConfigRender);
+});
 
 Token.prototype.draw = (function () {
 	const cached = Token.prototype.draw;
