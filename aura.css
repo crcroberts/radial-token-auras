@@ -1,0 +1,37 @@
+.auras {
+	padding: 0 4px;
+	margin-bottom: 10px;
+}
+
+.auras ol.form-group {
+	margin: 0;
+	padding: 0 0 4px;
+	display: block;
+}
+
+.auras .aura-row {
+	align-items: center;
+}
+
+.auras .aura-row:last-child {
+	margin-top: 4px;
+}
+
+.auras input[type=color] {
+	margin-right: 8px;
+}
+
+.auras input + span {
+	margin-left: 8px;
+	flex: .5;
+}
+
+.auras span + input {
+	margin-left: 8px;
+}
+
+.auras .checkbox {
+	display: flex;
+	font-size: 14px;
+	height: unset;
+}
