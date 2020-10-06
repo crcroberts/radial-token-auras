@@ -60,10 +60,8 @@ const Auras = {
 				(c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16));
 	}
 };
-Hooks.on('ready', () => {
-	const tokenConfigHook = `renderTokenConfig${game.system.id === 'pf1' ? 'PF' : ''}`;
-	Hooks.on(tokenConfigHook, Auras.onConfigRender);
-});
+
+Hooks.on('renderTokenConfig', Auras.onConfigRender);
 
 Token.prototype.draw = (function () {
 	const cached = Token.prototype.draw;
