@@ -89,7 +89,8 @@ Token.prototype.drawAuras = function () {
 			let w, h;
 
 			if (aura.square) {
-				[w, h] = [aura.distance * 2 + width, aura.distance * 2 + height];
+				w = aura.distance * 2 + (width * dim.distance);
+				h = aura.distance * 2 + (height * dim.distance);
 			} else {
 				[w, h] = [aura.distance, aura.distance];
 
