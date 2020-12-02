@@ -2,9 +2,9 @@
 	"name": "token-auras",
 	"title": "Token Auras",
 	"description": "Provide options for configuring token auras.",
-	"version": "1.7",
+	"version": "1.8",
 	"minimumCoreVersion": "0.6.0",
-	"compatibleCoreVersion": "0.7.3",
+	"compatibleCoreVersion": "0.7.7",
 	"author": "Kim Mantas",
 	"scripts": ["main.js"],
 	"styles": ["aura.css"],
@@ -19,5 +19,9 @@
 		"lang": "pt-BR",
 		"name": "Português (Brasil)",
 		"path": "lang/pt-BR.json"
+	}, {
+		"lang": "de",
+		"name": "Deutsch",
+		"path": "lang/de.json"
 	}]
 }
