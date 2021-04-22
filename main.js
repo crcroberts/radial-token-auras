@@ -1,11 +1,11 @@
 const Auras = {
-	getAllAuras: function (token) {
-		return Auras.getManualAuras(token).concat(token.getFlag('token-auras', 'auras') || []);
+	getAllAuras: function (doc) {
+		return Auras.getManualAuras(doc).concat(doc.getFlag('token-auras', 'auras') || []);
 	},
 
-	getManualAuras: function (token) {
-		let aura1 = token.getFlag('token-auras', 'aura1');
-		let aura2 = token.getFlag('token-auras', 'aura2');
+	getManualAuras: function (doc) {
+		let aura1 = doc.getFlag('token-auras', 'aura1');
+		let aura2 = doc.getFlag('token-auras', 'aura2');
 		return [aura1 || Auras.newAura(), aura2 || Auras.newAura()];
 	},
 
@@ -75,7 +75,7 @@ Token.prototype.draw = (function () {
 
 Token.prototype.drawAuras = function () {
 	this.auras.removeChildren().forEach(c => c.destroy());
-	const auras = Auras.getAllAuras(this).filter(a => a.distance);
+	const auras = Auras.getAllAuras(this.document).filter(a => a.distance);
 
 	if (auras.length) {
 		const gfx = this.auras.addChild(new PIXI.Graphics());
