@@ -14,6 +14,7 @@ Aura objects have the following properties:
     colour: string, // An HTML hexadecimal colour.
     opacity: number, // The opacity of the aura between 0 and 1.
     square: boolean, // The aura is square if true, otherwise it is circular.
+    permission: string, // The permission level required to see this aura.
     uuid: string // A unique identifier for every aura.
 }
 ```

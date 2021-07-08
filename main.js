@@ -1,4 +1,6 @@
 const Auras = {
+	PERMISSIONS: ['all', 'limited', 'observer', 'owner', 'gm'],
+
 	getAllAuras: function (doc) {
 		return Auras.getManualAuras(doc).concat(doc.getFlag('token-auras', 'auras') || []);
 	},
@@ -15,43 +17,94 @@ const Auras = {
 			colour: '#ffffff',
 			opacity: .5,
 			square: false,
+			permission: 'all',
 			uuid: Auras.uuid()
 		};
 	},
 
 	onConfigRender: function (config, html) {
 		const auras = Auras.getManualAuras(config.token);
-		const imageTab = html.find('.tab[data-tab="image"]');
 
-		imageTab.append($(`
-			<fieldset class="auras">
-				<legend>${game.i18n.localize('AURAS.Auras')}</legend>
-				<ol class="form-group">
-				${auras.map((aura, idx) => `
-					<li class="aura-row flexrow">
-						<input class="color" type="text" value="${aura.colour}"
-						       name="flags.token-auras.aura${idx + 1}.colour">
-						<input type="color" value="${aura.colour}"
-						       data-edit="flags.token-auras.aura${idx + 1}.colour">
-						<input type="text" data-dtype="Number" value="${aura.opacity}"
-						       name="flags.token-auras.aura${idx + 1}.opacity">
-						<span>${game.i18n.localize('AURAS.Opacity')}</span>
-						<input type="text" name="flags.token-auras.aura${idx + 1}.distance"
-						       value="${aura.distance ? aura.distance : ''}" data-dtype="Number">
-						<span>${game.i18n.localize('SCENES.Units')}</span>
-						<label class="checkbox">
-							<input type="checkbox" name="flags.token-auras.aura${idx + 1}.square"
-							       ${aura.square ? 'checked' : ''}>
-							${game.i18n.localize('SCENES.GridSquare')}
-						</label>
-					</li>
-				`).join('')}
-				</ol>
-			</fieldset>
+		// Expand the width
+		config.position.width = 540;
+		config.setPosition(config.position);
+
+		const nav = html.find('nav.sheet-tabs.tabs');
+		nav.append($(`
+			<a class="item" data-tab="auras">
+				<i class="far fa-dot-circle"></i>
+				${game.i18n.localize('AURAS.Auras')}
+			</a>
 		`));
 
-		imageTab.find('.auras input[type="color"][data-edit]')
-			.change(config._onChangeInput.bind(config));
+		const permissions = Auras.PERMISSIONS.map(perm => {
+			let i18n = `PERMISSION.${perm.toUpperCase()}`;
+			if (perm === 'all') {
+				i18n = 'AURAS.All';
+			}
+
+			if (perm === 'gm') {
+				i18n = 'USER.RoleGamemaster';
+			}
+
+			return {key: perm, label: game.i18n.localize(i18n)};
+		});
+
+		const auraConfig = auras.map((aura, idx) => `
+			<div class="form-group">
+				<label>${game.i18n.localize('AURAS.ShowTo')}</label>
+				<select name="flags.token-auras.aura${idx + 1}.permission">
+					${permissions.map(option => `
+						<option value="${option.key}"
+						        ${aura.permission === option.key ? 'selected' : ''}>
+							${option.label}
+						</option>
+					`)}
+				</select>
+			</div>
+			<div class="form-group">
+				<label>${game.i18n.localize('AURAS.AuraColour')}</label>
+				<div class="form-fields">
+					<input class="color" type="text" value="${aura.colour}"
+					       name="flags.token-auras.aura${idx + 1}.colour">
+					<input type="color" value="${aura.colour}"
+					       data-edit="flags.token-auras.aura${idx + 1}.colour">
+				</div>
+			</div>
+			<div class="form-group">
+				<label>
+					${game.i18n.localize('AURAS.Opacity')}
+					<span class="units">(0 &mdash; 1)</span>
+				</label>
+				<input type="number" step="0.1" value="${aura.opacity}"
+				       name="flags.token-auras.aura${idx + 1}.opacity">
+			</div>
+			<div class="form-group">
+				<label>
+					${game.i18n.localize('SCENES.GridDistance')}
+					<span class="units">(${game.i18n.localize('GridUnits')})</span>
+				</label>
+				<input type="number" step="5" value="${aura.distance ? aura.distance : ''}"
+				       name="flags.token-auras.aura${idx + 1}.distance">
+			</div>
+			<div class="form-group">
+				<label>${game.i18n.localize('SCENES.GridSquare')}</label>
+				<input type="checkbox" name="flags.token-auras.aura${idx + 1}.square"
+                       ${aura.square ? 'checked' : ''}>
+			</div>
+		`);
+
+		nav.parent().find('footer').before($(`
+			<div class="tab" data-tab="auras">
+				${auraConfig[0]}
+				<hr>
+				${auraConfig[1]}
+			</div>
+		`));
+
+		nav.parent()
+			.find('.tab[data-tab="auras"] input[type="color"][data-edit]')
+            .change(config._onChangeInput.bind(config));
 	},
 
 	uuid: function () {
@@ -75,7 +128,17 @@ Token.prototype.draw = (function () {
 
 Token.prototype.drawAuras = function () {
 	this.auras.removeChildren().forEach(c => c.destroy());
-	const auras = Auras.getAllAuras(this.document).filter(a => a.distance);
+	const auras = Auras.getAllAuras(this.document).filter(a => {
+		if (!a.distance) {
+			return false;
+		}
+
+		if (!a.permission || a.permission === 'all' || (a.permission === 'gm' && game.user.isGM)) {
+			return true;
+		}
+
+		return !!this.document?.actor?.testUserPermission(game.user, a.permission.toUpperCase());
+	});
 
 	if (auras.length) {
 		const gfx = this.auras.addChild(new PIXI.Graphics());
