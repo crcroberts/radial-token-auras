@@ -76,7 +76,7 @@ const Auras = {
 					${game.i18n.localize('AURAS.Opacity')}
 					<span class="units">(0 &mdash; 1)</span>
 				</label>
-				<input type="number" value="${aura.opacity}"
+				<input type="number" value="${aura.opacity}" step="any" min="0" max="1"
 				       name="flags.token-auras.aura${idx + 1}.opacity">
 			</div>
 			<div class="form-group">
@@ -84,8 +84,8 @@ const Auras = {
 					${game.i18n.localize('SCENES.GridDistance')}
 					<span class="units">(${game.i18n.localize('GridUnits')})</span>
 				</label>
-				<input type="number" value="${aura.distance ? aura.distance : ''}"
-				       name="flags.token-auras.aura${idx + 1}.distance">
+				<input type="number" value="${aura.distance ? aura.distance : ''}" step="any"
+				       name="flags.token-auras.aura${idx + 1}.distance" min="0">
 			</div>
 			<div class="form-group">
 				<label>${game.i18n.localize('SCENES.GridSquare')}</label>
