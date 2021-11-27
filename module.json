@@ -2,14 +2,14 @@
 	"name": "token-auras",
 	"title": "Token Auras",
 	"description": "Provide options for configuring token auras.",
-	"version": "1.14",
+	"version": "1.15",
 	"minimumCoreVersion": "0.8.8",
-	"compatibleCoreVersion": "0.8.8",
+	"compatibleCoreVersion": "0.8.9",
 	"author": "Kim Mantas",
 	"scripts": ["main.js"],
 	"url": "https://bitbucket.org/Fyorl/token-auras",
 	"manifest": "https://bitbucket.org/Fyorl/token-auras/raw/master/module.json",
-	"download": "https://bitbucket.org/Fyorl/token-auras/get/1.14.zip",
+	"download": "https://bitbucket.org/Fyorl/token-auras/get/1.15.zip",
 	"languages": [{
 		"lang": "en",
 		"name": "English",
@@ -22,5 +22,9 @@
 		"lang": "de",
 		"name": "Deutsch",
 		"path": "lang/de.json"
+	}, {
+		"lang": "it",
+		"name": "Italiano",
+		"path": "lang/it.json"
 	}]
 }
