@@ -3,6 +3,8 @@ A [FoundryVTT](https://foundryvtt.com) module for configuring token auras. Auras
 
 Expanded on work done by [Kim Mantas](https://bitbucket.org/Fyorl/token-auras).
 
+Install via Manifest URL: https://github.com/crcroberts/radial-token-auras/releases/latest/download/module.json
+
 ![Example token configuration](https://github.com/crcroberts/radial-token-auras/blob/master/example-config.jpg)
 
 ![Example aura visuals](https://github.com/crcroberts/radial-token-auras/blob/master/example-aura.jpg)
