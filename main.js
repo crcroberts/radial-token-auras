@@ -16,9 +16,9 @@ const Auras = {
 			distance: null,
 			colour: '#ffffff',
 			opacity: .5,
-			square: false,
 			permission: 'all',
-			uuid: Auras.uuid()
+			uuid: Auras.uuid(),
+			angle: 360
 		};
 	},
 
@@ -88,9 +88,12 @@ const Auras = {
 				       name="flags.token-auras.aura${idx + 1}.distance" min="0">
 			</div>
 			<div class="form-group">
-				<label>${game.i18n.localize('SCENES.GridSquare')}</label>
-				<input type="checkbox" name="flags.token-auras.aura${idx + 1}.square"
-                       ${aura.square ? 'checked' : ''}>
+				<label>
+					${game.i18n.localize('Emission Angle')}
+					<span class="units">(${game.i18n.localize('Degrees')})</span>
+				</label>
+				<input type="number" value="${aura.angle ? aura.angle : '360'}" step="any"
+				       name="flags.token-auras.aura${idx + 1}.angle" min="0" max="360">
 			</div>
 		`);
 
@@ -147,36 +150,34 @@ Token.prototype.drawAuras = function () {
 		const unit = dim.size / dim.distance;
 		const [cx, cy] = [this.w / 2, this.h / 2];
 		const {width, height} = this.data;
+		const radians = (Math.PI / 180);
 
 		auras.forEach(aura => {
-			let w, h;
+			let w, h, a;
 
-			if (aura.square) {
-				w = aura.distance * 2 + (width * dim.distance);
-				h = aura.distance * 2 + (height * dim.distance);
+			[w, h] = [aura.distance, aura.distance];
+			
+			a = aura.angle;
+			let angleBase = this.data.rotation + 450;
+			let angleStart = (angleBase - (a / 2));
+			let angleEnd = (angleBase + (a / 2));
+
+			if (squareGrid) {
+				w += width * dim.distance / 2;
+				h += height * dim.distance / 2;
 			} else {
-				[w, h] = [aura.distance, aura.distance];
-
-				if (squareGrid) {
-					w += width * dim.distance / 2;
-					h += height * dim.distance / 2;
-				} else {
-					w += (width - 1) * dim.distance / 2;
-					h += (height - 1) * dim.distance / 2;
-				}
+				w += (width - 1) * dim.distance / 2;
+				h += (height - 1) * dim.distance / 2;
 			}
 
 			w *= unit;
 			h *= unit;
+			angleStart *= radians;	
+			angleEnd *= radians;
+
 			gfx.beginFill(colorStringToHex(aura.colour), aura.opacity);
-
-			if (aura.square) {
-				const [x, y] = [cx - w / 2, cy - h / 2];
-				gfx.drawRect(x, y, w, h);
-			} else {
-				gfx.drawEllipse(cx, cy, w, h);
-			}
-
+			gfx.moveTo(cx, cy);
+			gfx.arc(cx, cy, w, angleStart, angleEnd, false);
 			gfx.endFill();
 		});
 	}
@@ -190,8 +191,9 @@ Token.prototype._onUpdate = (function () {
 			data.flags && data.flags['token-auras']
 			&& ['aura1', 'aura2', 'auras']
 				.some(k => typeof data.flags['token-auras'][k] === 'object');
+		const rotationUpdated = data.hasOwnProperty("rotation");
 
-		if (aurasUpdated) {
+		if (aurasUpdated || rotationUpdated) {
 			this.drawAuras();
 		}
 	};
