@@ -2,12 +2,12 @@ const Auras = {
 	PERMISSIONS: ['all', 'limited', 'observer', 'owner', 'gm'],
 
 	getAllAuras: function (doc) {
-		return Auras.getManualAuras(doc).concat(doc.getFlag('token-auras', 'auras') || []);
+		return Auras.getManualAuras(doc).concat(doc.getFlag('radial-token-auras', 'auras') || []);
 	},
 
 	getManualAuras: function (doc) {
-		let aura1 = doc.getFlag('token-auras', 'aura1');
-		let aura2 = doc.getFlag('token-auras', 'aura2');
+		let aura1 = doc.getFlag('radial-token-auras', 'aura1');
+		let aura2 = doc.getFlag('radial-token-auras', 'aura2');
 		return [aura1 || Auras.newAura(), aura2 || Auras.newAura()];
 	},
 
@@ -53,7 +53,7 @@ const Auras = {
 		const auraConfig = auras.map((aura, idx) => `
 			<div class="form-group">
 				<label>${game.i18n.localize('AURAS.ShowTo')}</label>
-				<select name="flags.token-auras.aura${idx + 1}.permission">
+				<select name="flags.radial-token-auras.aura${idx + 1}.permission">
 					${permissions.map(option => `
 						<option value="${option.key}"
 						        ${aura.permission === option.key ? 'selected' : ''}>
@@ -66,9 +66,9 @@ const Auras = {
 				<label>${game.i18n.localize('AURAS.AuraColour')}</label>
 				<div class="form-fields">
 					<input class="color" type="text" value="${aura.colour}"
-					       name="flags.token-auras.aura${idx + 1}.colour">
+					       name="flags.radial-token-auras.aura${idx + 1}.colour">
 					<input type="color" value="${aura.colour}"
-					       data-edit="flags.token-auras.aura${idx + 1}.colour">
+					       data-edit="flags.radial-token-auras.aura${idx + 1}.colour">
 				</div>
 			</div>
 			<div class="form-group">
@@ -77,7 +77,7 @@ const Auras = {
 					<span class="units">(0 &mdash; 1)</span>
 				</label>
 				<input type="number" value="${aura.opacity}" step="any" min="0" max="1"
-				       name="flags.token-auras.aura${idx + 1}.opacity">
+				       name="flags.radial-token-auras.aura${idx + 1}.opacity">
 			</div>
 			<div class="form-group">
 				<label>
@@ -85,7 +85,7 @@ const Auras = {
 					<span class="units">(${game.i18n.localize('GridUnits')})</span>
 				</label>
 				<input type="number" value="${aura.distance ? aura.distance : ''}" step="any"
-				       name="flags.token-auras.aura${idx + 1}.distance" min="0">
+				       name="flags.radial-token-auras.aura${idx + 1}.distance" min="0">
 			</div>
 			<div class="form-group">
 				<label>
@@ -93,7 +93,7 @@ const Auras = {
 					<span class="units">(${game.i18n.localize('Degrees')})</span>
 				</label>
 				<input type="number" value="${aura.angle ? aura.angle : '360'}" step="any"
-				       name="flags.token-auras.aura${idx + 1}.angle" min="0" max="360">
+				       name="flags.radial-token-auras.aura${idx + 1}.angle" min="0" max="360">
 			</div>
 		`);
 
@@ -188,9 +188,9 @@ Token.prototype._onUpdate = (function () {
 	return function (data) {
 		cached.apply(this, arguments);
 		const aurasUpdated =
-			data.flags && data.flags['token-auras']
+			data.flags && data.flags['radial-token-auras']
 			&& ['aura1', 'aura2', 'auras']
-				.some(k => typeof data.flags['token-auras'][k] === 'object');
+				.some(k => typeof data.flags['radial-token-auras'][k] === 'object');
 		const rotationUpdated = data.hasOwnProperty("rotation");
 
 		if (aurasUpdated || rotationUpdated) {

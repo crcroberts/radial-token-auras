@@ -38,10 +38,10 @@ token.setFlag('token-auras', 'aura1.distance', 10);
 
 The UI-configurable auras are stored in `aura1` and `aura2`, but additional auras can be added by adding to the `auras` array:
 ```js
-const auras = duplicate(token.getFlag('token-auras', 'auras'));
+const auras = duplicate(token.getFlag('radial-token-auras', 'auras'));
 const newAura = Auras.newAura();
 newAura.distance = 15;
 newAura.colour = '#ff0000';
 auras.push(newAura);
-token.setFlag('token-auras', 'auras', existingAuras);
+token.setFlag('radial-token-auras', 'auras', existingAuras);
 ```
